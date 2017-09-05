@@ -605,12 +605,12 @@ account_db(JObj, MaybeAssumeMODB) ->
         'undefined' ->
             case account_id(JObj) of
                 'undefined' -> 'undefined';
-                AccountId -> kz_util:format_account_db(AccountId)
+                AccountId -> kzd_account:format_account_db(AccountId)
             end;
-        ?MATCH_MODB_SUFFIX_RAW(_, _, _)=Db when MaybeAssumeMODB -> kz_util:format_account_modb(Db, 'encoded');
-        ?MATCH_MODB_SUFFIX_UNENCODED(_, _, _)=Db when MaybeAssumeMODB -> kz_util:format_account_modb(Db, 'encoded');
+        ?MATCH_MODB_SUFFIX_RAW(_, _, _)=Db when MaybeAssumeMODB -> kzd_account:format_account_modb(Db, 'encoded');
+        ?MATCH_MODB_SUFFIX_UNENCODED(_, _, _)=Db when MaybeAssumeMODB -> kzd_account:format_account_modb(Db, 'encoded');
         ?MATCH_MODB_SUFFIX_ENCODED(_, _, _)=Db when MaybeAssumeMODB -> Db;
-        ?NE_BINARY=Db -> kz_util:format_account_db(Db);
+        ?NE_BINARY=Db -> kzd_account:format_account_db(Db);
         _ -> 'undefined'
     end.
 
