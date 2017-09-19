@@ -244,3 +244,54 @@ sdks:
 
 validate-schemas:
 	@$(ROOT)/scripts/validate-schemas.sh $(ROOT)/applications/crossbar/priv/couchdb/schemas
+
+CHANGED = $(shell git --no-pager diff --name-only HEAD origin/master -- applications core scripts)
+TO_FMT = $(shell echo $CHANGED | grep -v ".app.src")
+CHANGED_SWAGGER = $(shell git --no-pager diff --name-only HEAD origin/master -- applications/crossbar/priv/api/swagger.json)
+
+pre-circle:
+	@pip install --upgrade pip
+	@pip install PyYAML mkdocs pyembed-markdown jsonschema
+
+circle-docs:
+	@./scripts/state-of-docs.sh || true
+	@$(MAKE) apis
+	@$(MAKE) docs
+
+circle-codechecks:
+	@./scripts/code_checks.bash $(CHANGED)
+	@$(MAKE) code_checks
+	@./scripts/validate-js.sh $(CHANGED)
+
+circle-fmt:
+	$(if $(TO_FMT), $($(MAKE) fmt))
+	$(MAKE) elvis
+
+circle-build:
+	@$(MAKE) clean deps kazoo xref sup_completion
+
+circle-schemas:
+	@$(MAKE) validate-schemas
+	$(if $(CHANGED_SWAGGER), $(MAKE) circle-swagger)
+
+circle-swagger:
+	@-$(MAKE) validate-swagger
+	@-npm install swagger-tools && time ./node_modules/swagger-tools/bin/swagger-tools validate applications/crossbar/priv/api/swagger.json
+	@-$(MAKE) sdks
+
+circle-unstaged:
+	echo Unstaged changes!
+	git status --porcelain
+	git --no-pager diff
+	echo 'Maybe try `make apis` and see if that fixes anything ;)'
+	exit 1
+
+circle-dialyze:
+	@$(MAKE) build-plt
+	TO_DIALYZE="$(CHANGED)" $(MAKE) dialyze
+
+circle-release:
+	@$(MAKE) build-ci-release
+
+circle: pre-circle circle-fmt circle-codechecks circle-build circle-docs circle-schemas circle-dialyze circle-release
+      $(if $(git status --porcelain | wc -l), $(MAKE) circle-unstaged)
