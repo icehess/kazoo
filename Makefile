@@ -250,9 +250,9 @@ sdks:
 validate-schemas:
 	@$(ROOT)/scripts/validate-schemas.sh $(ROOT)/applications/crossbar/priv/couchdb/schemas
 
-CHANGED = $(shell git --no-pager diff --diff-filter=acmr --name-only HEAD origin/master -- applications core scripts)
-TO_FMT = $(shell echo $CHANGED | grep -v ".app.src")
-CHANGED_SWAGGER = $(shell git --no-pager diff --name-only HEAD origin/master -- applications/crossbar/priv/api/swagger.json)
+CHANGED := $(shell git --no-pager diff --diff-filter=acmr --name-only HEAD origin/master -- applications core scripts)
+TO_FMT := $(CHANGED)
+CHANGED_SWAGGER := $(shell git --no-pager diff --name-only HEAD origin/master -- applications/crossbar/priv/api/swagger.json)
 
 pre-circle:
 	@pip install --upgrade pip
@@ -269,7 +269,7 @@ circle-codechecks:
 	@./scripts/validate-js.sh $(CHANGED)
 
 circle-fmt:
-	$(if $(TO_FMT), $($(MAKE) fmt))
+	$(if "$(TO_FMT)", $(MAKE) fmt)
 	$(MAKE) elvis
 
 circle-build:
