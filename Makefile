@@ -5,7 +5,7 @@ FMT = $(ROOT)/make/erlang-formatter-master/fmt.sh
 
 KAZOODIRS = core/Makefile applications/Makefile
 
-.PHONY: $(KAZOODIRS) deps core apps xref xref_release dialyze dialyze-it dialyze-apps dialyze-core dialyze-kazoo clean clean-test clean-release build-release build-ci-release tar-release release read-release-cookie elvis install ci diff fmt bump-copyright apis validate-swagger sdks coverage-report fs-headers docs validate-schemas
+.PHONY: $(KAZOODIRS) deps core apps xref xref_release dialyze dialyze-it dialyze-apps dialyze-core dialyze-kazoo clean clean-test clean-release build-release build-ci-release tar-release release read-release-cookie elvis install ci diff fmt bump-copyright apis validate-swagger sdks coverage-report fs-headers docs validate-schemas apps_of_app circle circle-pre circle-fmt circle-codechecks circle-build circle-docs circle-schemas circle-dialyze circle-release circle-unstaged
 
 all: compile rel/dev-vm.args
 
@@ -254,7 +254,7 @@ CHANGED := $(shell git --no-pager diff --diff-filter=acmr --name-only HEAD origi
 TO_FMT := $(CHANGED)
 CHANGED_SWAGGER := $(shell git --no-pager diff --name-only HEAD origin/master -- applications/crossbar/priv/api/swagger.json)
 
-pre-circle:
+circle-pre:
 	@pip install --upgrade pip
 	@pip install PyYAML mkdocs pyembed-markdown jsonschema
 
@@ -296,5 +296,5 @@ circle-dialyze:
 circle-release:
 	@$(MAKE) build-ci-release
 
-circle: pre-circle circle-fmt circle-codechecks circle-build circle-docs circle-schemas circle-dialyze circle-release
+circle: circle-pre circle-fmt circle-codechecks circle-build circle-docs circle-schemas circle-dialyze circle-release
       $(if $(git status --porcelain | wc -l), $(MAKE) circle-unstaged)
