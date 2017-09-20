@@ -250,7 +250,7 @@ sdks:
 validate-schemas:
 	@$(ROOT)/scripts/validate-schemas.sh $(ROOT)/applications/crossbar/priv/couchdb/schemas
 
-CHANGED := $(shell git --no-pager diff --diff-filter=acmr --name-only HEAD origin/master -- applications core scripts)
+CHANGED := $(shell git --no-pager diff --name-only HEAD origin/master -- applications core scripts)
 TO_FMT := $(git --no-pager diff --name-only HEAD origin/master -- "*.erl" "*.hrl" "*.escript")
 CHANGED_SWAGGER := $(shell git --no-pager diff --name-only HEAD origin/master -- applications/crossbar/priv/api/swagger.json)
 
