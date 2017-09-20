@@ -269,15 +269,15 @@ circle-codechecks:
 	@./scripts/validate-js.sh $(CHANGED)
 
 circle-fmt:
-	$(if "$(TO_FMT)", $(MAKE) fmt)
-	$(MAKE) elvis
+	@$(if "$(TO_FMT)", $(MAKE) fmt)
+	@$(MAKE) elvis
 
 circle-build:
 	@$(MAKE) clean deps kazoo xref sup_completion
 
 circle-schemas:
 	@$(MAKE) validate-schemas
-	$(if $(CHANGED_SWAGGER), $(MAKE) circle-swagger)
+	@$(if $(CHANGED_SWAGGER), $(MAKE) circle-swagger)
 
 circle-swagger:
 	@-$(MAKE) validate-swagger
@@ -291,10 +291,10 @@ circle-unstaged:
 
 circle-dialyze:
 	@$(MAKE) build-plt
-	TO_DIALYZE="$(CHANGED)" $(MAKE) dialyze
+	@TO_DIALYZE="$(CHANGED)" $(MAKE) dialyze
 
 circle-release:
 	@$(MAKE) build-ci-release
 
 circle: circle-pre circle-fmt circle-codechecks circle-build circle-docs circle-schemas circle-dialyze circle-release
-      $(if $(git status --porcelain | wc -l), $(MAKE) circle-unstaged)
+	@$(if $(git status --porcelain | wc -l), $(MAKE) circle-unstaged)
