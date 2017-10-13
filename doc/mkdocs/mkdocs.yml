@@ -439,3 +439,4 @@ pages:
   - 'Running Dev Shells': 'scripts/dev/README.md'
   - 'Using Dialyzer': 'doc/engineering/dialyzer.md'
   - 'Webhooks': 'doc/engineering/webhooks.md'
+theme: material
