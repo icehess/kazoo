@@ -464,6 +464,10 @@
             io:format(F ++ "\n", A)
         end
        ).
+
+-define(DEV_LOG(F, A), io:format(user, "~s:~p  " ++ F ++ "\n", [?MODULE, ?LINE | A])).
+-define(DEV_LOG(F), ?DEV_LOG(F, [])).
+
 -define(SUP_LOG_DEBUG(F), ?SUP_LOG_DEBUG(F, [])).
 -define(SUP_LOG_WARNING(F), ?SUP_LOG_WARNING(F, [])).
 -define(SUP_LOG_ERROR(F), ?SUP_LOG_ERROR(F, [])).

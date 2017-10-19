@@ -84,6 +84,18 @@ wait_for_connection(Tag, Timeout) ->
 get_server() ->
     get_server('local').
 
+-ifdef(TEST).
+
+-record(server, {
+    url,
+    options = [] :: list()
+}).
+
+-spec get_server(term()) -> server().
+get_server(_) -> {kazoo_couch, #server{}}.
+
+-else.
+
 -spec get_server(term()) -> server().
 get_server(Tag) ->
     MatchSpec = [{#data_connection{ready = 'true'
@@ -99,6 +111,7 @@ get_server(Tag) ->
         {[{App, Server}], _} -> {App, Server};
         _ -> 'undefined'
     end.
+-endif.
 
 -spec test_conn() -> {'ok', kz_json:object()} |
                      {'error', any()}.

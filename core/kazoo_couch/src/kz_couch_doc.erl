@@ -34,8 +34,12 @@
 %% @end
 %%------------------------------------------------------------------------------
 -spec get_db(server(), ne_binary()) -> db().
+-ifdef(TEST).
+get_db(_, DbName) -> #db{name=DbName}.
+-else.
 get_db(#server{}=Conn, DbName) ->
     kz_couch_util:get_db(Conn, DbName).
+-endif.
 
 %% Document related functions --------------------------------------------------
 
@@ -126,11 +130,17 @@ do_fetch_rev(#db{}=Db, DocId) ->
 -spec do_fetch_doc(couchbeam_db(), ne_binary(), kz_proplist()) ->
                           {'ok', kz_json:object()} |
                           couchbeam_error().
+-ifdef(TEST).
+do_fetch_doc(#db{name=DbName}, DocId, _Options) ->
+    ?LOG_DEBUG("tried ~s/~s", [DbName, DocId]),
+    {error, not_found}.
+-else.
 do_fetch_doc(#db{}=Db, DocId, Options) ->
     case kz_term:is_empty(DocId) of
         'true' -> {'error', 'empty_doc_id'};
         'false' -> ?RETRY_504(couchbeam:open_doc(Db, DocId, Options))
     end.
+-endif.
 
 -spec do_save_doc(couchbeam_db(), kz_json:object() | kz_json:objects(), kz_proplist()) ->
                          {'ok', kz_json:object()} |

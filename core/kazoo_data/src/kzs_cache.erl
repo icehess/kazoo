@@ -159,6 +159,9 @@ maybe_cache_failure(DbName, DocId, _Options, {'error', ErrorCode}=Error, ErrorCo
     'ok'.
 
 -spec add_to_doc_cache(ne_binary(), ne_binary(), kz_json:object() | data_error()) -> 'ok'.
+-ifdef(TEST).
+add_to_doc_cache(_, _, _) -> 'ok'.
+-else.
 add_to_doc_cache(DbName, DocId, CacheValue) ->
     kz_cache:erase_local(?CACHE_NAME, {?MODULE, DbName, DocId}),
     CacheProps = [{'origin', {'db', DbName, DocId}}
@@ -215,6 +218,7 @@ expires_policy_value(DbName, Classification, Type) ->
         <<"infinity">> -> 'infinity';
         Timeout -> kz_term:to_integer(Timeout)
     end.
+-endif.
 
 -spec flush_cache_doc(ne_binary() | db(), ne_binary() | kz_json:object()) -> 'ok'.
 flush_cache_doc(#db{name=Name}, Doc) ->

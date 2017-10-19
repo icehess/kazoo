@@ -291,9 +291,16 @@ fetch_cached_dataplan(Key, Fun) ->
             CacheProps = [{'origin', [{'db', ?KZ_DATA_DB, K } || K <- Keys]}
                          ,{'expires','infinity'}
                          ],
-            kz_cache:store_local(?KAZOO_DATA_PLAN_CACHE, PT, Plan, CacheProps),
+            store_in_cache(PT, Plan, CacheProps),
             Plan
     end.
+
+-ifdef(TEST).
+store_in_cache(_, _, _) -> 'ok'.
+-else.
+store_in_cache(PT, Plan, CacheProps) ->
+    kz_cache:store_local(?KAZOO_DATA_PLAN_CACHE, PT, Plan, CacheProps).
+-endif.
 
 -spec fetch_dataplan(ne_binary()) -> kz_json:object().
 fetch_dataplan(Id) ->
